@@ -12,7 +12,7 @@ if os.path.isfile('save.txt'):
         apps = [x for x in tempApps if x.strip()]
 
 
-def addApp():
+def add_app():
 
     for widget in frame.winfo_children():
         widget.destroy()
@@ -26,7 +26,8 @@ def addApp():
         label = tk.Label(frame, text=app, bg="gray")
         label.pack()
 
-def runApps():
+
+def run_apps():
     for app in apps:
         os.startfile(app)
 
@@ -39,12 +40,12 @@ frame.place(relwidth=0.8, relheight=0.8, relx=0.1, rely=0.1)
 
 openFile = tk.Button(root, text="Open File", padx=10,
                      pady=5, fg="white", bg="#263D42",
-                     command=addApp)
+                     command=add_app)
 openFile.pack()
 
 runApps = tk.Button(root, text="Run Apps", padx=10,
                     pady=5, fg="white", bg="#263D42",
-                    command=runApps)
+                    command=run_apps)
 runApps.pack()
 
 for app in apps:
