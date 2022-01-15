@@ -4,7 +4,7 @@ import os
 
 
 root = Tk()
-root.title('Tkinter 101 Images app')
+root.title('Tkinter 101 Image Viewer app')
 root.iconbitmap(os.getcwd() + '\Icons\chart_graphic_statistic_icon_208605.ico')
 
 # Setting min/max window size
