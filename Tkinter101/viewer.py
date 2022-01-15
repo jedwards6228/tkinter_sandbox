@@ -45,11 +45,9 @@ def button_state_changer():
     if image_index == 0:
         forward_button = Button(root, text="Next", command=lambda: picture_changer('next'))
         back_button = Button(root, text="Previous", state=DISABLED)
-        print('should disable back button')
     elif image_index == len(image_list) - 1:
         forward_button = Button(root, text="Next", state=DISABLED)
         back_button = Button(root, text="Previous", command=lambda: picture_changer('previous'))
-        print('should disable next button')
     else:
         forward_button = Button(root, text="Next", command=lambda: picture_changer('next'))
         back_button = Button(root, text="Previous", command=lambda: picture_changer('previous'))
@@ -61,8 +59,6 @@ def button_state_changer():
 
 # Make list of all images in a folder
 image_list = [str(x) for x in os.listdir('Images')]
-print(image_list)
-print(len(image_list))
 image_index = 0
 display_picture()
 
