@@ -4,8 +4,8 @@ from PIL import ImageTk,Image
 root = Tk()
 root.title("Frame project")
 
-my_frame = LabelFrame(root, text="Options", padx=100, pady=100)
-my_frame.pack(padx=10, pady=10)
+my_frame = LabelFrame(root, text="Options", padx=50, pady=50)
+my_frame.pack(padx=50, pady=50)
 
 my_button1 = Button(my_frame, text="Add Topic")
 my_button1.grid(row=0, column=0, sticky=W+E)
