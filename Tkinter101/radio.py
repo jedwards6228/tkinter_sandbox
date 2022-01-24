@@ -16,8 +16,6 @@ modes = [
 pizza = StringVar()
 pizza.set("Pepperoni")
 
-my_label = Label(root, text=pizza.get())
-my_label.pack()
 
 for text, mode in modes:
     Radiobutton(root, text=text, variable=pizza, value=mode, command=lambda: clicked(pizza.get())).pack()
@@ -30,5 +28,8 @@ def clicked(value):
     my_label = Label(root, text=value)
     my_label.pack()
 
+
+my_label = Label(root, text=pizza.get())
+my_label.pack()
 
 mainloop()
