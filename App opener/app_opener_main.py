@@ -13,7 +13,6 @@ if os.path.isfile('save.txt'):
 
 
 def add_app():
-
     for widget in frame.winfo_children():
         widget.destroy()
 
