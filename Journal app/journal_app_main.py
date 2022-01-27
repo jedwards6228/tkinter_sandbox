@@ -1,6 +1,7 @@
 from tkinter import *
 
 root = Tk()
+root.title("Jordan's Journaling App")
 
 # Canvas
 canvas = Canvas(root, height=700, width=700, bg="#263D42")
