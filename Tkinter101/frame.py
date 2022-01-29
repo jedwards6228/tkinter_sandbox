@@ -17,4 +17,5 @@ my_button2.grid(row=1, column=0, sticky=W+E)
 my_button3 = Button(my_frame, text="Save")
 my_button3.grid(row=2, column=0, sticky=W+E)
 
-root.mainloop()
+if __name__ == '__main__':
+    root.mainloop()
