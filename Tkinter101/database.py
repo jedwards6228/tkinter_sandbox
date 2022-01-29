@@ -4,7 +4,7 @@ from pathlib import Path
 
 
 root = Tk()
-root.title('Database Project')
+root.title('Address Book DB Project')
 root.geometry('400x400')
 root.resizable(False, False)
 root.columnconfigure(0, weight=1)
