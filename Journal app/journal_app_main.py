@@ -2,7 +2,6 @@ from tkinter import *
 import sqlite3
 from pathlib import Path
 
-
 root = Tk()
 root.title("Jordan's Journaling App")
 root.geometry("800x800+1300+150")
@@ -16,9 +15,11 @@ connection = sqlite3.connect(r'C:\Users\Jordan\PycharmProjects\Tkinter Sandbox\J
 with connection:
     cursor = connection.cursor()
     cursor.execute('''
-    CREATE TABLE IF NOT EXISTS user_credentials (
+    CREATE TABLE IF NOT EXISTS user (
     username text,
-    password text
+    password text,
+    first_name text,
+    last_name text
     )''')
     connection.commit()
 
@@ -44,7 +45,7 @@ un_label.grid(row=1, column=0, padx=10, pady=(10, 0))
 un_entry = Entry(login_frame)
 un_entry.grid(row=1, column=1, padx=(0, 10), pady=(10, 0))
 
-pw_label = Label(login_frame, text="Password:", bg=frame_bg) # Do this to others and make padding
+pw_label = Label(login_frame, text="Password:", bg=frame_bg)  # Do this to others and make padding
 pw_label.grid(row=2, column=0)
 pw_entry = Entry(login_frame, show="*")
 pw_entry.grid(row=2, column=1, padx=(0, 10))
@@ -53,6 +54,39 @@ message_label = Label(login_frame, text="", bg=frame_bg)
 message_label.grid(row=4, column=0, columnspan=2, pady=5)
 
 
+# New Window to collect additional user info (first/last)
+def user_info_window():
+    user_window = Toplevel()
+    user_window.title("User Info")
+    user_window.geometry("300x225")
+    # Define frame size
+    user_window.columnconfigure(0, weight=1)
+    user_window.columnconfigure(1, weight=1)
+
+    # Set labels and entry fields
+    first_name_label = Label(user_window, text="First Name")
+    first_name_label.grid(row=1, column=0)
+    first_name_entry = Entry(user_window)
+    first_name_entry.grid(row=1, column=1)
+    last_name_label = Label(user_window, text="Last Name")
+    last_name_label.grid(row=2, column=0)
+    last_name_entry = Entry(user_window)
+    last_name_entry.grid(row=2, column=1)
+
+    # Save info on button press from user info window
+    def save_and_close():
+        user_info[0:2] = [first_name_entry.get(), last_name_entry.get()]
+        user_window.destroy()
+
+    save_button = Button(user_window, text="Save and Close", command=save_and_close)
+    save_button.grid(row=3, column=0, columnspan=2)
+
+
+# User info variable
+user_info = []
+
+
+# Register new user
 def register_user():
     # Get un and pw
     credentials = [un_entry.get(), pw_entry.get()]
@@ -65,13 +99,16 @@ def register_user():
     # Check to see if they exist already
     stored_creds = find_credentials()
     if len(stored_creds) == 0:
-        # Create user
-        sql = """"INSERT INTO user_credentials VALUES(?, ?);
+        # Pop up user info window to get first/last name
+        user_info_window()
+        # Create user in credentials table
+        # Then Create a table for the user
+        sql = """INSERT INTO user VALUES(?, ?);
               CREATE TABLE IF NOT EXISTS ? (
               
               )"""
-        cursor.execute(sql, credentials)     #PROBABLY A BAD SPOT TO STOP
-        connection.commit()                 # NEXT I NEED TO CREATE A USER'S DB TABLE AND INSERT SOME DATA
+        cursor.execute(sql, credentials)  # PROBABLY A BAD SPOT TO STOP
+        connection.commit()  # NEXT I NEED TO CREATE A USER'S DB TABLE AND INSERT SOME DATA
         message_label['text'] = "User Created"  # BUT I'LL HAVE TO CHANGE AROUND HOW THE EXECUTE COMMAND RUNS
     else:
         message_label['text'] = "User name already exists"
@@ -93,7 +130,7 @@ def login_user():
 def find_credentials():
     with connection:
         cursor = connection.cursor()
-        sql = "SELECT * from user_credentials WHERE username = ?"
+        sql = "SELECT * from user WHERE username = ?"
         cursor.execute(sql, [un_entry.get()])
         results = cursor.fetchall()
     return results
