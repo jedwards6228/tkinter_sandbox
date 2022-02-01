@@ -5,7 +5,7 @@ from pathlib import Path
 
 root = Tk()
 root.title("Login or Register")
-root.geometry("300x225")
+root.geometry("300x100")
 root.resizable(False, False)
 
 # Create directory for db if needed
@@ -22,7 +22,6 @@ with connection:
     password text
     )''')
     connection.commit()
-
 
 # Configure row and column properties
 root.columnconfigure(0, weight=1)
