@@ -99,7 +99,7 @@ def register_user():
     # Check to see if they exist already
     stored_creds = find_credentials()
     if len(stored_creds) == 0:
-        # Pop up user info window to get first/last name
+        # Pop up user info window to get first/last name NEED TO WAIT ON SQL UNTIL THIS IS DONE OR DO IT SEPARATELY
         user_info_window()
         # Create user in credentials table
         # Then Create a table for the user
