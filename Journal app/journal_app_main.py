@@ -58,36 +58,53 @@ message_label.grid(row=4, column=0, columnspan=2, pady=5)
 def user_info_window():
     user_window = Toplevel()
     user_window.title("User Info")
-    user_window.geometry("300x225")
+    user_window.geometry("300x150")
+    user_window.configure(background=frame_bg)
     # Define frame size
     user_window.columnconfigure(0, weight=1)
     user_window.columnconfigure(1, weight=1)
 
     # Set labels and entry fields
-    first_name_label = Label(user_window, text="First Name")
-    first_name_label.grid(row=1, column=0)
+    upper_label = Label(user_window, text="Please Enter New User Info", font=("TkDefaultFont", 14, "bold"), bg=frame_bg)
+    upper_label.grid(row=0, column=0, columnspan=2, padx=10, pady=10)
+
+    first_name_label = Label(user_window, text="First Name", bg=frame_bg)
+    first_name_label.grid(row=1, column=0, padx=(10, 5))
     first_name_entry = Entry(user_window)
-    first_name_entry.grid(row=1, column=1)
-    last_name_label = Label(user_window, text="Last Name")
-    last_name_label.grid(row=2, column=0)
+    first_name_entry.grid(row=1, column=1, padx=(10, 5))
+    last_name_label = Label(user_window, text="Last Name", bg=frame_bg)
+    last_name_label.grid(row=2, column=0, padx=(10, 5))
     last_name_entry = Entry(user_window)
-    last_name_entry.grid(row=2, column=1)
+    last_name_entry.grid(row=2, column=1, padx=(10, 5))
+
+    lower_label = Label(user_window, text="", bg=frame_bg)
+    lower_label.grid(row=3, column=0, columnspan=2)
 
     # Save info on button press from user info window
     def save_and_close():
         user_info[0:2] = [first_name_entry.get(), last_name_entry.get()]
-        user_window.destroy()
+        if len(user_info[0]) == 0 or len(user_info[1]) == 0:
+            lower_label['text'] = "Please Complete the Form"
+        else:
+            sql = "UPDATE user SET first_name = ?, last_name = ? WHERE username = ?;"
+            values = user_info.copy()
+            values.append(current_user)
+            cursor.execute(sql, values)
+            connection.commit()
+            user_window.destroy()
 
     save_button = Button(user_window, text="Save and Close", command=save_and_close)
-    save_button.grid(row=3, column=0, columnspan=2)
+    save_button.grid(row=3, column=0, columnspan=2, padx=(10, 5), pady=(15, 10), ipadx=5)
 
 
 # User info variable
+current_user = None
 user_info = []
 
 
 # Register new user
 def register_user():
+    global current_user
     # Get un and pw
     credentials = [un_entry.get(), pw_entry.get()]
     # Reset fields but leave un up
@@ -101,24 +118,30 @@ def register_user():
     if len(stored_creds) == 0:
         # Pop up user info window to get first/last name NEED TO WAIT ON SQL UNTIL THIS IS DONE OR DO IT SEPARATELY
         user_info_window()
-        # Create user in credentials table
+        current_user = credentials[0]
+        # Add a user
         # Then Create a table for the user
-        sql = """INSERT INTO user VALUES(?, ?);
-              CREATE TABLE IF NOT EXISTS ? (
-              
-              )"""
-        cursor.execute(sql, credentials)  # PROBABLY A BAD SPOT TO STOP
-        connection.commit()  # NEXT I NEED TO CREATE A USER'S DB TABLE AND INSERT SOME DATA
-        message_label['text'] = "User Created"  # BUT I'LL HAVE TO CHANGE AROUND HOW THE EXECUTE COMMAND RUNS
+        sql1 = "INSERT INTO user (username, password) VALUES(?, ?);"
+        sql2 = f"""CREATE TABLE IF NOT EXISTS {credentials[0]} (
+        date text,
+        prompts text);"""
+        value1 = credentials.copy()
+        cursor.execute(sql1, value1)
+        cursor.execute(sql2)
+        connection.commit()
+        message_label['text'] = "User Created"
     else:
         message_label['text'] = "User name already exists"
 
 
 def login_user():
+    global current_user
     # Get un and pw
     entered_credentials = [(un_entry.get(), pw_entry.get())]
     stored_credentials = find_credentials()
     if entered_credentials == stored_credentials:
+        current_user = un_entry.get()
+        print(current_user)
         reset_fields(True, True, True)
         message_label['text'] = "Credentials Accepted"
     else:
@@ -130,7 +153,7 @@ def login_user():
 def find_credentials():
     with connection:
         cursor = connection.cursor()
-        sql = "SELECT * from user WHERE username = ?"
+        sql = "SELECT username, password FROM user WHERE username = ?"
         cursor.execute(sql, [un_entry.get()])
         results = cursor.fetchall()
     return results
